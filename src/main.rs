@@ -167,7 +167,9 @@ fn main() {
                 Ok(source) => {
                     let (name, reqs, _) = naga_oil::compose::get_preprocessor_data(&source);
                     let name =
-                        name.unwrap_or(format!("\"{}\"", path.to_string_lossy().into_owned()));
+                        name.unwrap_or(format!("\"{}\"", path.to_string_lossy().replace("\\", "/")));
+                    let name = name.strip_prefix("\"./").map(|name| format!("\"{name}")).unwrap_or(name);
+                    eprintln!("found {}", name);
                     let reqs: HashSet<_> = reqs.into_iter().map(|req| req.import).collect();
                     if includes.contains_key(&name) {
                         eprintln!("warning: duplicate definition for `{name}`");
@@ -214,6 +216,7 @@ fn main() {
                                 ..Default::default()
                             })
                             .unwrap();
+                        continue;
                     }
                     next_reqs.extend(
                         subreqs
