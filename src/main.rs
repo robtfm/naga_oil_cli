@@ -216,6 +216,7 @@ fn main() {
                                 ..Default::default()
                             })
                             .unwrap();
+                        next_reqs.remove(req);
                         continue;
                     }
                     next_reqs.extend(
